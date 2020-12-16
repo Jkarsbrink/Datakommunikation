@@ -1,0 +1,2 @@
+Wed Dec 16 08:57:22 CET 2020, KYH/julius/sensor, 15'C
+Wed Dec 16 08:57:32 CET 2020, KYH/julius/sensor, 20'C

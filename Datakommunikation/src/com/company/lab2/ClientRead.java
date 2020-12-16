@@ -8,19 +8,18 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-public class ReadTopic {
+public class ClientRead {
     String subscribeTopic = "KYH/julius/sensor";
     String writeTopic = "KYH/julius/sensor/data";
-    String mqttBroker = "tcp://broker.hivemq.com:1883";
     String clientId = "e-ClientReadTopic";
     MqttClient mqttClient;
-    ReadTopic(){
+    ClientRead(){
         try{
             MemoryPersistence persistence = new MemoryPersistence();
-            mqttClient = new MqttClient(mqttBroker, clientId, persistence);
+            mqttClient = new MqttClient("tcp://broker.hivemq.com:1883", clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
-            System.out.println("Connecting to HiveMq: " + mqttBroker);
+            System.out.println("Connecting to HiveMQ    : " + mqttClient);
             mqttClient.connect(connOpts);
             System.out.println("Connected and listening to topic: " + subscribeTopic);
             System.out.println("Writes to topic: " + writeTopic);
@@ -32,20 +31,19 @@ public class ReadTopic {
     class MqttPostPropertyMessageListener implements IMqttMessageListener {
         @Override
         public void messageArrived(String topic, MqttMessage content) throws MqttException, IOException {
-            String text = content.toString();
-            saveToLog( "Temperature, " + text);
-            int x = Integer.parseInt(text.substring(0,2));
-            System.out.println(text);
+            int x = Integer.parseInt(content.toString().substring(13,15));
+            System.out.println(x);
+            System.out.println("Received - " + topic + ": "+ content.toString());
             String s = "ctrl, ";
             if (x >= 22) {
                 s = s + "-";
             } else {
                 s = s + "+";
             }
-            saveToLog(s);
-            MqttMessage msg = new MqttMessage(s.getBytes(StandardCharsets.UTF_8));
-            msg.setQos(2);
-            mqttClient.publish(writeTopic, msg);
+            MqttMessage message = new MqttMessage(s.getBytes(StandardCharsets.UTF_8));
+            message.setQos(2);
+            mqttClient.publish(writeTopic, message);
+            System.out.println("Sending - "+writeTopic + ": " + s);
         }
     }
 
@@ -57,7 +55,7 @@ public class ReadTopic {
     }
 
     public static void main(String[] args) {
-        new ReadTopic();
+        new ClientRead();
     }
 }
 

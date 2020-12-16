@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
 public class Main {
-    String[] server = new String[8];
+    String[] server = new String[5];
     Main(){
         multipleConnection();
         SNTPMessage message = new SNTPMessage();

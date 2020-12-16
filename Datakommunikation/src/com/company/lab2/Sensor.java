@@ -17,7 +17,7 @@ public class Sensor {
     String clientId = "e-TempSensor";
     MqttClient mqttClient;
     Timer timer;
-    int oneMinute = 60;
+    int oneMinute = 10;
     long delay = oneMinute * 1000L;
     int degree = 0;
     Sensor() {
@@ -31,7 +31,7 @@ public class Sensor {
             mqttClient.connect(connOpts);
             System.out.println("Connected and writing to topic: " + topic);
             timer = new Timer();
-            timer.schedule(new TimerToDo(), delay);
+            timer.schedule(new TimerStarting(), delay);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -48,7 +48,7 @@ public class Sensor {
     }
 
 
-    private class TimerToDo extends TimerTask {
+    private class TimerStarting extends TimerTask {
         @Override
         public void run(){
             try{
@@ -62,7 +62,7 @@ public class Sensor {
             }
             timer.cancel();
             timer = new Timer();
-            timer.schedule(new TimerToDo(), delay);
+            timer.schedule(new TimerStarting(), delay);
             System.out.println("Setting new timer");
         }
     }
